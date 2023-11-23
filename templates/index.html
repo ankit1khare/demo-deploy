@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Product Grid</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #E5E5E5;
+        }
+
+        .sidebar {
+            background-color: #2B2B3A;
+            /* Dark background for sidebar */
+            color: #FFF;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 240px;
+            /* Fixed width for the sidebar */
+            box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            /* In case of scroll */
+            z-index: 1000;
+            /* Make sure sidebar stacks on top */
+        }
+
+        .sidebar img {
+            max-width: 100%;
+            /* Ensure the image is contained within the sidebar */
+            margin-bottom: 16px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 24px;
+            background-color: #DCC6E0;
+            /* Light purple background */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            /* Fix the header at the top */
+            left: 340px;
+            /* Start the header where the sidebar ends */
+            right: 0;
+            /* Stretch the header to the right edge of the viewport */
+            z-index: 999;
+            /* Ensure the header is above other content */
+        }
+
+        .container {
+            padding: 16px;
+            margin-left: 280px;
+            /* Same as sidebar width to prevent overlap */
+            margin-top: 2px;
+            /* Adjust this value based on the actual height of your header */
+            background-color: #F8F8FA;
+            /* Slightly different background to match your design */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        /* .header h1 {
+            margin: 0;
+            color: #333;
+        } */
+
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            cursor: pointer; 
+            position: relative;
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .card h3 {
+            margin: 8px 0;
+            color: #4A4A6A;
+        }
+
+        .card p {
+            margin: 8px 0;
+            color: #9A9AB0;
+            font-size: 14px;
+        }
+
+        .card .price {
+            color: #7C73E6;
+            font-weight: bold;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 80%;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        /* Rest of your styles... */
+        .search-inputs {
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="submit"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .form-group input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Add responsiveness if needed */
+        @media (max-width: 600px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .header {
+                left: 0;
+            }
+            .container {
+                margin-left: 0;
+            }
+        }
+
+        .card {
+            cursor: pointer;
+            position: relative;
+            /* Other styling as required */
+        }
+
+        .full-description {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1;
+            /* Adjust positioning as needed */
+        }
+
+        .full-description.show {
+            display: block;
+        }
+
+        /* Style to cover the whole page when a card is expanded */
+        .cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
+            z-index: 0; /* Behind the popup */
+            display: none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <img src="/static/rockset.png" alt="Powered by Rockset">
+        
+        <!-- Search Inputs -->
+        <div class="search-inputs">
+            <h2>Search Filters</h2>
+            <form action="/" method="post" id="search-form">
+                <div class="form-group">
+                    <label for="search_query">Search Text:</label>
+                    <input type="text" id="search_query" name="search_query">
+                </div>
+
+                <div class="form-group">
+                    <label for="min_price">Min Price:</label>
+                    <input type="text" id="min_price" name="min_price">
+                </div>
+
+                <div class="form-group">
+                    <label for="max_price">Max Price:</label>
+                    <input type="text" id="max_price" name="max_price">
+                </div>
+
+                <div class="form-group">
+                    <label for="brand">Brand:</label>
+                    <input type="text" id="brand" name="brand">
+                </div>
+
+                <div class="form-group">
+                    <label for="limit">Result Limit:</label>
+                    <input type="text" id="limit" name="limit">
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Search">
+                </div>
+            </form>
+        </div>
+        
+        <div class="sidebar-footer">
+            <p>Powered by Rockset</p>
+        </div>
+        <!-- Additional sidebar content here -->
+    </div>
+
+    <!-- <div class="header">
+        <h1>Product Recommendations</h1>
+    </div> -->
+
+    <div class="container" id="product-container">
+        <!-- Products will be added here by JavaScript -->
+    </div>
+
+    <script>
+        // Dynamically create the products array using Jinja2 templating
+        const products = [
+            {% for record in records_list %}
+            {
+                img: "{{ record.image_url }}",
+                title: "{{ record.title }}",
+                desc: "{{ record.description }}",
+                price: "{{ record.estimated_price }}"
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+            
+        // Get the container element
+        const container = document.getElementById('product-container');
+    
+        // Loop through the products and append them to the container
+        // Function to show/hide full description
+        function toggleDescription(card) {
+            const fullDesc = card.querySelector('.full-description');
+            fullDesc.classList.toggle('show');
+        }
+
+        products.forEach(product => {
+            container.innerHTML += `
+                <div class="card" onclick="toggleDescription(this)">
+                    <img src="/static/${product.img}" alt="${product.title}" style="max-width: 300px; max-height: 300px;">
+                    <h3>${product.title}</h3>
+                    <p>${product.desc.substring(0, 50)}${product.desc.length > 50 ? '...' : ''}</p>
+                    <div class="full-description">
+                        <p>${product.desc}</p>
+                    </div>
+                    <p class="price">${product.price}</p>
+                </div>
+            `;
+        });
+
+        document.body.innerHTML += `<div class="cover" onclick="hideAllDescriptions()"></div>`;
+
+        function toggleDescription(card) {
+            const fullDesc = card.querySelector('.full-description');
+            const cover = document.querySelector('.cover');
+            if (!fullDesc.classList.contains('show')) {
+                hideAllDescriptions();
+            }
+            fullDesc.classList.toggle('show');
+            cover.style.display = 'block';
+        }
+
+        function hideAllDescriptions() {
+            document.querySelectorAll('.full-description').forEach(desc => {
+                desc.classList.remove('show');
+            });
+            document.querySelector('.cover').style.display = 'none';
+        }
+
+    </script>
+    
+
+</body>
+
+</html>
