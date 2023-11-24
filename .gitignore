@@ -1,0 +1,3 @@
+*.ipynb
+.env
+.DS_store

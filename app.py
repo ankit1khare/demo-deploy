@@ -61,14 +61,14 @@ def get_inputs():
     min_price = request.form.get('min_price')
     max_price = request.form.get('max_price')
     brand = request.form.get('brand')
-    limit = request.form.get('limit')
+    # limit = request.form.get('limit')
 
     return {
         "search_query": search_query, 
         "min_price": min_price, 
         "max_price": max_price, 
         "brand": brand, 
-        "limit": limit
+        # "limit": limit
     }
 
 # function for getting openai embedding, returns embedding (array of floats)
@@ -134,12 +134,12 @@ def get_rs_results(inputs, region, rockset_key, search_query_embedding):
                 "name": "brand",
                 "type": "string",
                 "value": inputs["brand"]
-            },
-            {
-                "name": "limit",
-                "type": "int",
-                "value": inputs["limit"]
             }
+            # {
+            #     "name": "limit",
+            #     "type": "int",
+            #     "value": inputs["limit"]
+            # }
         ]
     )
     rockset_end = (datetime.now())
@@ -165,48 +165,48 @@ def get_rs_results(inputs, region, rockset_key, search_query_embedding):
     
     # now let's do the full text search approach
     # we'll split the search query text into the first two terms
-    (term1, term2) = inputs["search_query"].split()
+    # (term1, term2) = inputs["search_query"].split()
 
-    rockset_start = (datetime.now())
-    api_response = rs.QueryLambdas.execute_query_lambda_by_tag(
-        workspace="confluent_webinar",
-        query_lambda="find_related_games_fts",
-        tag="latest",
-        parameters=[
-            {
-                "name": "term1",
-                "type": "string",
-                "value": str(term1)
-            },
-            {
-                "name": "term2",
-                "type": "string",
-                "value": str(term2)
-            },
-            {
-                "name": "min_price",
-                "type": "float",
-                "value": inputs["min_price"]
-            },
-            {
-                "name": "max_price",
-                "type": "float",
-                "value": inputs["max_price"]
-            },
-            {
-                "name": "brand",
-                "type": "string",
-                "value": inputs["brand"]
-            },
-            {
-                "name": "limit",
-                "type": "int",
-                "value": inputs["limit"]
-            }
-        ]
-    )
-    rockset_end = (datetime.now())
-    elapsed_time = rockset_end - rockset_start
+    # rockset_start = (datetime.now())
+    # api_response = rs.QueryLambdas.execute_query_lambda_by_tag(
+    #     workspace="confluent_webinar",
+    #     query_lambda="find_related_games_fts",
+    #     tag="latest",
+    #     parameters=[
+    #         {
+    #             "name": "term1",
+    #             "type": "string",
+    #             "value": str(term1)
+    #         },
+    #         {
+    #             "name": "term2",
+    #             "type": "string",
+    #             "value": str(term2)
+    #         },
+    #         {
+    #             "name": "min_price",
+    #             "type": "float",
+    #             "value": inputs["min_price"]
+    #         },
+    #         {
+    #             "name": "max_price",
+    #             "type": "float",
+    #             "value": inputs["max_price"]
+    #         },
+    #         {
+    #             "name": "brand",
+    #             "type": "string",
+    #             "value": inputs["brand"]
+    #         },
+    #         {
+    #             "name": "limit",
+    #             "type": "int",
+    #             "value": inputs["limit"]
+    #         }
+    #     ]
+    # )
+    # rockset_end = (datetime.now())
+    # elapsed_time = rockset_end - rockset_start
     # print("\nFTS Elapsed time: " + str(elapsed_time.total_seconds()))
 
     # print("\nFTS result:")
