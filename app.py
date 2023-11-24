@@ -17,6 +17,8 @@ from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()  # This loads the variables from .env
 
+import json
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -45,9 +47,10 @@ def index():
             if file_found:
                 # Overwrite the record["image_url"] with the path to the local file
                 record["image_url"] = file_found
+                record["description"] = json.dumps(record["description"])
                 # print(f"Matched file: {file_found}")
             else:
-                print("No matching file found.")
+                # print("No matching file found.")
 
         # Render index.html with results
         return render_template('index.html', records_list=records_list)
@@ -111,8 +114,8 @@ def get_rs_results(inputs, region, rockset_key, search_query_embedding):
     # Execute Query Lambda By Version
     rockset_start = (datetime.now())
     api_response = rs.QueryLambdas.execute_query_lambda_by_tag(
-        workspace="confluent_webinar",
-        query_lambda="find_related_games_vs",
+        workspace="reinvent_2023",
+        query_lambda="reinvent_knn_demo",
         tag="latest",
         parameters=[
             {
@@ -122,12 +125,12 @@ def get_rs_results(inputs, region, rockset_key, search_query_embedding):
             },
             {
                 "name": "min_price",
-                "type": "float",
+                "type": "int",
                 "value": inputs["min_price"]
             },
             {
                 "name": "max_price",
-                "type": "float",
+                "type": "int",
                 "value": inputs["max_price"]
             },
             {
@@ -148,7 +151,7 @@ def get_rs_results(inputs, region, rockset_key, search_query_embedding):
 
     # print("\nVector Search result:")
     # for record in api_response["results"]:
-        # print(f"{record['title']}, {record['image_ur1']}, {record['brand']}, {record['estimated_price']}, {record['description']}")
+    #     print(f"{record['title']}, {record['image_ur1']}, {record['brand']}, {record['estimated_price']}, {record['description']}")
 
     records_list = []
     
