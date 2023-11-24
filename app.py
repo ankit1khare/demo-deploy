@@ -50,7 +50,7 @@ def index():
                 record["description"] = json.dumps(record["description"])
                 # print(f"Matched file: {file_found}")
             else:
-                # print("No matching file found.")
+                print("No matching file found.")
 
         # Render index.html with results
         return render_template('index.html', records_list=records_list)
