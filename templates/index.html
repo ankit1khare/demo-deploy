@@ -236,6 +236,22 @@
             align-items: center;
         }
 
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Aligns children at the start and end of the container */
+            height: 100vh; /* Sets the height of the sidebar to the full viewport height */
+            /* Add other styles for the sidebar if needed */
+        }
+
+        /* Add this class to the div that wraps the copyright text */
+        .copyright {
+            text-align: center; /* Center-align the text */
+            margin-top: auto; /* Pushes the copyright to the bottom */
+            padding: 30px; /* Add padding at the top and bottom if needed */
+            color: #fff; /* Set the color of the text */
+        }
+
     </style>
 </head>
 
@@ -274,12 +290,17 @@
                 </div>
             </form>
         </div>
+
+        <div class="copyright">
+            &copy; 2023 Rockset
+        </div>
+
     </div>
     
         
-        <div class="sidebar-footer">
+        <!-- <div class="sidebar-footer">
             <p>Powered by Rockset</p>
-        </div>
+        </div> -->
         <!-- Additional sidebar content here -->
     </div>
 
