@@ -53,11 +53,11 @@ def index():
                 print("No matching file found.")
 
         # Render index.html with results
-        return render_template('index.html', records_list=records_list)
+        return render_template('index.html', records_list=records_list, request=request)
 
     # print("still get done")
     # If method is GET, just render the form
-    return render_template('index.html')
+    return render_template('index.html', request=request)
 
 def get_inputs():
     search_query = request.form.get('search_query')

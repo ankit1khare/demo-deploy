@@ -196,6 +196,45 @@
             z-index: 0; /* Behind the popup */
             display: none;
         }
+        
+        /* General button styles */
+        .button {
+            padding: 10px 15px;
+            margin: 10px 5px 10px 0; /* Adjusted margin for spacing */
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Specific styles for search button */
+        .search-button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+
+        .search-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Specific styles for clear button */
+        .clear-button {
+            background-color: #c0c6c8; /* Red */
+            color: white;
+        }
+
+        .clear-button:hover {
+            background-color: rgb(238, 233, 232);
+        }
+
+        /* Container for buttons to align them side by side */
+        .button-container {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+        }
 
     </style>
 </head>
@@ -211,34 +250,32 @@
             <form action="/" method="post" id="search-form">
                 <div class="form-group">
                     <label for="search_query">Search Text:</label>
-                    <input type="text" id="search_query" name="search_query">
+                    <input type="text" id="search_query" name="search_query" required value="{{ request.form.get('search_query', '') }}">
                 </div>
-
+    
                 <div class="form-group">
                     <label for="min_price">Min Price:</label>
-                    <input type="text" id="min_price" name="min_price">
+                    <input type="number" id="min_price" name="min_price" required value="{{ request.form.get('min_price', '') }}">
                 </div>
-
+    
                 <div class="form-group">
                     <label for="max_price">Max Price:</label>
-                    <input type="text" id="max_price" name="max_price">
+                    <input type="number" id="max_price" name="max_price" required value="{{ request.form.get('max_price', '') }}">
                 </div>
-
+    
                 <div class="form-group">
                     <label for="brand">Brand:</label>
-                    <input type="text" id="brand" name="brand">
+                    <input type="text" id="brand" name="brand" required value="{{ request.form.get('brand', '') }}">
                 </div>
-
-                <!-- <div class="form-group">
-                    <label for="limit">Result Limit:</label>
-                    <input type="text" id="limit" name="limit">
-                </div> -->
-
-                <div class="form-group">
-                    <input type="submit" value="Search">
+    
+                <div class="button-container">
+                    <input type="submit" class="button search-button" value="Search">
+                    <input type="button" class="button clear-button" value="Clear" onclick="clearForm()">
                 </div>
             </form>
         </div>
+    </div>
+    
         
         <div class="sidebar-footer">
             <p>Powered by Rockset</p>
@@ -308,6 +345,18 @@
                 desc.classList.remove('show');
             });
             document.querySelector('.cover').style.display = 'none';
+        }
+        
+        function clearForm() {
+            // Get the form element
+            var form = document.getElementById("search-form");
+
+            // Iterate over all form elements and set their value to an empty string
+            for (var i = 0; i < form.elements.length; i++) {
+                if (form.elements[i].type !== "submit" && form.elements[i].type !== "button") { // Skip submit and button types
+                    form.elements[i].value = "";
+                }
+            }
         }
 
     </script>
